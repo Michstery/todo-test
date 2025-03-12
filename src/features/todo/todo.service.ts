@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException, } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
 
 @Injectable()
@@ -6,9 +6,14 @@ export class TodoService {
   constructor(private prisma: PrismaService) {}
 
   async create(userId: number, title: string) {
-    return this.prisma.todo.create({
-      data: { userId, title },
-    });
+    if (!title) {
+        throw new UnauthorizedException('Please Enter Your Todo Title');
+    } else{
+        return this.prisma.todo.create({
+            data: { userId, title },
+          });
+    }
+
   }
 
   async findAll(
