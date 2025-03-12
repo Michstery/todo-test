@@ -3,11 +3,15 @@ import { TodoController } from './todo.controller';
 import { TodoService } from './todo.service';
 import { PrismaService } from '../../prisma.service';
 import { JwtModule } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    JwtModule.register({
-      secret: 'your-secret-key',
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        secret: config.get<string>('JWT_SECRET'),
+      }),
     }),
   ],
   controllers: [TodoController],
